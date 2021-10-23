@@ -6,6 +6,14 @@ abc
 
 ## Verwendungen
 abc
+Skript starten:
+```
+chmod +x scriptname.sh
+sudo ./scriptname.sh
+```
+
+Wenn Interpreter-Fehler auftreten die Encodierung von Windows auf Linux anpassen:
+`sed -i -e 's/\r$//' scriptname.sh`
 
 ## Funktionen
 abc

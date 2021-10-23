@@ -54,12 +54,17 @@ read user
 adduser $user
 echo "Done."
 echo ""
+echo "Granting permissions on repository..."
+chown -R $user:$user $bupath
+echo "Done."
+echo ""
 echo "Adding SSH-Public-Key for user..."
 echo " Enter public SSH-Key generated in in client installation process"
 read sshkey
 echo "Done."
 echo ""
 echo "Adding key to authorized_keys..."
+mkdir -p /home/$user/.ssh
 echo "command=\"borg serve --restrict-to-path $bupath --append-only\" $sshkey" >> /home/$user/.ssh/authorized_keys
 echo "Done."
 echo ""

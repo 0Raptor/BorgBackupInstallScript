@@ -47,11 +47,12 @@ echo " Enter type (recommended: RSA)"
 read keytype
 echo " Enter key length (recommended: 2048)"
 read keylen
-ssh-keygen -f ~/.ssh/$keyname -t $keytype -b $keylen -p ""
+mkdir -p /root/.ssh
+ssh-keygen -f /root/.ssh/$keyname -t $keytype -b $keylen -P ""
 echo "Done."
 echo ""
 echo "Showing public key (to enter at server installation)..."
-while read line; do echo $line; done < $keyname.pub
+while read line; do echo $line; done < /root/.ssh/$keyname.pub
 echo Done.
 echo "Updating root's ssh config..."
 echo "Host $hostname" >> /root/.ssh/config
