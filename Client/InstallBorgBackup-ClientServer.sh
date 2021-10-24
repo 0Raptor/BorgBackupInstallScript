@@ -107,8 +107,8 @@ cat <<EOT >> $backupdir/backup.sh
 
 LOG="backup.log"
 
-export BORG_REPO=\"ssh://$hostname/$repopath\"
-export BORG_PASSPHRASE=\'$repopsw\'
+export BORG_REPO="ssh://$hostname/$repopath"
+export BORG_PASSPHRASE='$repopsw'
 
 ##
 ## Write output to logfile
@@ -124,7 +124,7 @@ echo "###### Starting backup on \$(date) ######"
 ## Create list of installed software
 ##
 
-dpkg --get-selections > /root/backup/software.list
+dpkg --get-selections > $backupdir/software.list
 
 
 ##
@@ -132,7 +132,7 @@ dpkg --get-selections > /root/backup/software.list
 ##
 
 echo "Creating database dumps ..."
-/bin/bash /root/backup/dbdump.sh
+/bin/bash $backupdir/dbdump.sh
 
 
 ##
@@ -140,7 +140,7 @@ echo "Creating database dumps ..."
 ##
 
 echo "Syncing backup files ..."
-borg create --verbose --stats --list --compression zstd,$repocomp       \\
+borg create --verbose --stats --list --compression zstd,$repocomp      \\
     ::'{now:%Y-%m-%d_%H:%M}'                			\\
     /home							\\
     /root	                                        	\\
@@ -167,13 +167,13 @@ echo "Writing database backup..."
 cat <<EOT >> $backupdir/dbdump.sh
 #!/bin/bash
 
-DBUSER=\"$dbusr\"
-DBPASSWD=\"$dbpsw\"
-DBBAKPATH=\"/root/backup/dbdumps/\"
+DBUSER="$dbusr"
+DBPASSWD="$dbpsw"
+DBBAKPATH="$backupdir/dbdumps/"
 
-DBS=\"$dbs\"
+DBS="$dbs"
 
-for DBNAME in \$DBS; do echo \"Creating backup for database \$DBNAME\" && mysqldump -u \$DBUSER -p\$DBPASSWD \$DBNAME > \$DBBAKPATH\"\$DBNAME.sql\"; done
+for DBNAME in \$DBS; do echo "Creating backup for database \$DBNAME" && mysqldump -u \$DBUSER -p\$DBPASSWD \$DBNAME > \$DBBAKPATH "\$DBNAME.sql"; done
 
 EOT
 echo "Done."
@@ -184,7 +184,7 @@ cat <<EOT >> $backupdir/dbdump.sh
 EOT
 echo "Done."
 fi
-echo ""
 
+echo ""
 echo "Finished installation and configuration."
 echo "66896480727376738064726576667371"

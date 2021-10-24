@@ -114,7 +114,7 @@ exec 2>&1
 
 echo "###### Pruning backup on \$(date) ######"
 
-export BORG_PASSPHRASE=\'$repopsw\'
+export BORG_PASSPHRASE='$repopsw'
 borg prune -v $bupath \\
 --keep-daily=7 \\
 --keep-weekly=4 \\
@@ -127,5 +127,6 @@ else
 echo "Skipped purge script."
 fi
 
+echo ""
 echo "Finished installation and configuration."
 echo "66896480727376738064726576667371"
