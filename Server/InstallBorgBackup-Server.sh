@@ -3,11 +3,12 @@ clear # clear the console window
 echo "BorgBackup Server Setup - Client-Server" # write text after echo to command line
 
 echo ""
+# make sure the script was executed as root (by comparing the uid) --> if not, inform the user and restart the script as root (exec sudo ...)
 [ "$UID" -eq 0 ] || echo "Hello $(whoami)! Root-privileges are required to setup and configure BorgBackup."
 [ "$UID" -eq 0 ] || exec sudo "$0" "$@"
 
 echo "This script installs software and edits the ssh configuration of your system. Please make sure you have read and understand what this script does to avoid wrong inputs that may damage your system."
-echo "Your inputs will not be validated. I do not assume  any liability."
+echo "Your inputs will not be validated. I do not assume any liability."
 echo ""
 
 echo "You need to run the installer for server and client simultaneously!"
@@ -60,7 +61,7 @@ adduser $user
 echo "Done."
 echo ""
 echo "Granting permissions on repository..."
-# appoint the new user as owner of the backup-repository's directory and subdirectory owner
+# appoint the new user as owner of the backup-repository's directory and subdirectory
 chown -R $user:$user $bupath
 echo "Done."
 echo ""

@@ -8,7 +8,7 @@ echo ""
 [ "$UID" -eq 0 ] || exec sudo "$0" "$@"
 
 echo "This script installs software and edits the ssh configuration of your system. Please make sure you have read and understand what this script does to avoid wrong inputs that may damage your system."
-echo "Your inputs will not be validated. I do not assume  any liability."
+echo "Your inputs will not be validated. I do not assume any liability."
 echo ""
 
 echo "You need to run the installer for server and client simultaneously!"
