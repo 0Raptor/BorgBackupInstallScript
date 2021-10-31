@@ -1,9 +1,11 @@
 # BorgBackup Installations-Skript
-Diese Skript-Dateien können zur Installation und Konfiguration von BorgBackup auf einem Linux-System eingesetzt werden (getestet unter Ubuntu). Während der Installation müssen die Parameter durch den Benutzer eingegeben werden.  
+Diese Skript-Dateien können zur Installation und Konfiguration von [BorgBackup](https://borgbackup.readthedocs.io/en/stable/) auf einem Linux-System eingesetzt werden (getestet unter Ubuntu). Während der Installation müssen die Parameter durch den Benutzer eingegeben werden.  
   
 Es gibt zwei grundlegende Konfigurationsoptionen:
 - Client-Server (der Client speichert seine Backups auf der Festplatte eines externen Servers)
 - Client-Only (der Client speichert seine Backups lokal ab, z. B. auf einer angeschlossenen Festplatte)
+
+*An English translation is available at [README_EN.md](README_EN.md)*
 
 ## Anforderungen
 Das Skript erfordert ein Linux-Betriebssystem (getestet mit Ubuntu), um ausgeführt zu werden.  
@@ -82,16 +84,28 @@ Die Skripte erstellen oder modifizieren anhand von Benutzereingaben alle nötige
 - /home/%BackupUser%/purge-backup.sh
 	- Enthält die Befehle zum Aufräumen der Backups
 	- Veraltete und fehlerhafte Backups werden gelöscht
+- /etc/ssh/sshd_config
+	- Verhindert das Einloggen des Backupusers durch Passwortauthentifizierung
 - Befehl: `sudo contab -e`
 	- Terminiert die Ausführung der Prunes
 - Verzeichnis für die Backups
 	- Hier werden die vom Client gesicherten Dateien abgespeichert
 - Exportierter Schlüssel
 	- Zum Zugreifen auf die BorgBackup-Repository wird das Passwort und die Schlüssel-Datei (in dem Ordner abgelegt) benötigt
-	- Sollte das Repository teilweise beschädigt werden (darunter die Schlüssel-Datei) können auch die intakten Daten nicht wieder hergestellt werden --> für den Fall sollte die Schlüssel-Datei exportiert und sicher verwahrt werden
+	- Sollte das Repository teilweise beschädigt werden (darunter die Schlüssel-Datei), können auch die intakten Daten nicht wieder hergestellt werden --> für den Fall sollte die Schlüssel-Datei exportiert und sicher verwahrt werden
 
 ## Funktionen
-Einige Funktionen des Backupskripts erfordern eine vorige Konfiguration des Systems.
+Einige Funktionen des Backupskripts werden standardmäßig eingerichtet, andere erfordern eine vorige Konfiguration des Systems.
+
+### Standardmäßig gesicherte Dateien
+Das unangepasste Backupskript sichert die folgenden Daten:
+- Eine Liste aller installierten Pakete
+- Die Verzeichnisse
+	- /home
+	- /root
+	- /etc
+	- /var
+- (Wenn konfiguriert) einen zusätzlichen Datenbank-Dump aller bei der Installation angegebenen Datenbanken
 
 ### Datenbank Backup
 Es wird ein spezieller Datenbank-Benutzer benötigt, um die Daten zu 'dumpen'. 
@@ -102,6 +116,7 @@ create user 'backup'@'localhost' identified by 'backupuserpassword';
 grant SELECT, RELOAD, LOCK TABLES, REPLICATION CLIENT, SHOW VIEW, EVENT, TRIGGER on *.* to 'backup'@'localhost';
 quit;
 ```
+Ist dies konfiguriert, können die Logindaten und Datenbanknamen bei der Installation angegeben werden.
 
 ## Inspiration
 https://borgbackup.readthedocs.io/en/stable/quickstart.html  
@@ -110,3 +125,28 @@ https://thomas-leister.de/server-backups-mit-borg/
 ## Lizenz
 Lizenziert unter GNU General Public License v3.0!  
 Dieses Skript entstand im Zuge einer Hochschularbeit.
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+# Benutzung von BorgBackup
+## Wiederherstellung von Backups
+Die erzeugten Backups können bei einem Systemausfall oder versehentlichen Löschen jederzeit wieder hergestellt werden.
+
+### Von Server
+Dateien vom Server wiederherstellen. Sollte aus der Dateisystem-Wurzel aufgerufen werden, da die Backup-Ordnerstruktur in dem aktuellen Ordner nachgebildet wird. Bei PATH kann optional ein einzelner Ordner, eine einzelne Datei (oder mehrere durch Wildcards) ausgewählt werden. Sonst wird alles wieder hergestellt.
+```
+borg extract ssh://[HOST]/[REPOSITORY PATH] ([PATH])
+```
+
+### Von Client
+Dateien von lokaler Festplatte wiederherstellen. Sollte aus der Dateisystem-Wurzel aufgerufen werden, da die Backup-Ordnerstruktur in dem aktuellen Ordner nachgebildet wird. Bei PATH kann optional ein einzelner Ordner, eine einzelne Datei (oder mehrere mit Wildcards) ausgewählt werden. Sonst wird alles wieder hergestellt.
+```
+borg extract [REPOSITORY PATH] ([PATH])
+```
+
+## Beschädigten Key ersetzen
+Beim Installationsprozess wird ein Key exportiert, der für die Benutzung der Backup-Repositories essenziell ist. Wird dieser im Repository beschädigt, kann er über folgenden Befehl wieder importiert werden.
+```
+borg key import [REPOSITORY PATH] [BACKUP KEY PATH]
+```
