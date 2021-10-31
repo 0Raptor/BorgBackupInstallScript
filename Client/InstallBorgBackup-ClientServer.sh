@@ -1,8 +1,9 @@
 #!/bin/bash
-clear
-echo "BorgBackup Client Setup - Client-Server"
+clear # clear the console window
+echo "BorgBackup Client Setup - Client-Server" # write text after echo to command line
 
 echo ""
+# make sure the script was executed as root (by comparing the uid) --> if not, inform the user and restart the script as root (exec sudo ...)
 [ "$UID" -eq 0 ] || echo "Hello $(whoami)! Root-privileges are required to setup and configure BorgBackup."
 [ "$UID" -eq 0 ] || exec sudo "$0" "$@"
 
@@ -17,11 +18,11 @@ echo "#############################################################"
 echo "#                  Software Installation                    #"
 echo "#############################################################"
 echo "Updating apt..."
-apt update
+apt update # update local repository info (in case it was never/ a  long time ago done on the machine)
 echo "Done."
 echo ""
 echo "Installing BorgBackup..."
-apt install borgbackup
+apt install borgbackup # install the package "borgbackup"
 echo "Done."
 echo ""
 
@@ -31,7 +32,7 @@ echo "#############################################################"
 echo "You need to create a user with the server installer first!"
 echo "Collecting data..."
 echo " Enter backup server's IP/ FQDN"
-read hostaddress
+read hostaddress # reads user input from the command line and saves it as the variable $hostaddress
 echo " Enter backup server's SSH port"
 read hostport
 echo " Enter backupuser name"
@@ -47,14 +48,18 @@ echo " Enter type (recommended: RSA)"
 read keytype
 echo " Enter key length (recommended: 2048)"
 read keylen
+# create a directory to store ssh configurations. -p disables warnings if the dir already existed and makes it possible to create multiple nested folders at once
 mkdir -p /root/.ssh
+# generates a new ssh-keypair (public and private) at the specified location (-f), algorithm (-t), key length in bit (-b) and no password (-P "" - empty string)
 ssh-keygen -f /root/.ssh/$keyname -t $keytype -b $keylen -P ""
 echo "Done."
 echo ""
 echo "Showing public key (to enter at server installation)..."
+# read all lines from the public key (<) even there should only be one and print them to the console (echo)
 while read line; do echo $line; done < /root/.ssh/$keyname.pub
 echo Done.
 echo "Updating root's ssh config..."
+# append (>>) (or create if not existing) the ssh configuration file line by line with the collected information
 echo "Host $hostname" >> /root/.ssh/config
 echo "    HostName $hostaddress" >> /root/.ssh/config
 echo "    Port $hostport" >> /root/.ssh/config
@@ -82,22 +87,26 @@ read includedb
 echo "Done."
 echo ""
 echo "Creating directory for backup information"
+# create a directory to store backups and dumps. -p disables warnings if the dir already existed and makes it possible to create multiple nested folders at once
 mkdir -p $backupdir/dbdumps
 echo "Done."
 echo ""
 echo "Adding cronjob..."
-crontab -l | { cat; echo "$cronargs $backupdir/backup.sh > /dev/null 2>&1"; } | crontab - #optaining current cron config, adding the new line, piping back to cron to save
+#obtaining current cron config (crontab -l), adding the new line (echo) to the existing ones (cat), piping (|) back to cron to save (crontab -)
+crontab -l | { cat; echo "$cronargs $backupdir/backup.sh > /dev/null 2>&1"; } | crontab -
 echo "Done."
 echo "Creating files to store backup instructions..."
-touch $backupdir/backup.sh
-chown root:root $backupdir/backup.sh #make sure file is only readeble to root, 'cause it contains the passphrase
-chmod 0700 $backupdir/backup.sh
+#make sure files are created and only readable to root, 'cause they contain passphrases
+touch $backupdir/backup.sh # create empty file
+chown root:root $backupdir/backup.sh # appoint root as owner
+chmod 0700 $backupdir/backup.sh # set file permissions: user root can do everything with the file (7), group root and other users nothing (00)
 touch $backupdir/dbdump.sh
 chown root:root $backupdir/dbdump.sh
 chmod 0700 $backupdir/dbdump.sh
 echo "Done."
 echo ""
 echo "Writing main executable"
+# creating a "here-document" (EOT - EOT), but writing it into the specified file (>>) instead of showing it on the console (cat)
 cat <<EOT >> $backupdir/backup.sh
 #!/bin/bash
 
@@ -152,7 +161,8 @@ echo "###### Finished backup on \$(date) ######"
 EOT
 echo "Done."
 echo ""
-if [ "$includedb" = "y" ]
+# execute different commands based on the user input
+if [ "$includedb" = "y" ] # if the user entered y
 then
 echo "Collecting information for database backups..."
 echo "  You need a mysql-user that can lock and access all databases you want to include (refer to README.md)."
@@ -164,6 +174,7 @@ echo " Enter databases to backup (seperated by a space)"
 read dbs
 echo "Done."
 echo "Writing database backup..."
+# creating a "here-document" (EOT - EOT), but writing it into the specified file (>>) instead of showing it on the console (cat)
 cat <<EOT >> $backupdir/dbdump.sh
 #!/bin/bash
 
@@ -177,13 +188,14 @@ for DBNAME in \$DBS; do echo "Creating backup for database \$DBNAME" && mysqldum
 
 EOT
 echo "Done."
-else
+else # if they didn't enter y
 echo "Writing database backup..."
+# creating an empty "here-document" (EOT - EOT), but writing it into the specified file (>>) instead of showing it on the console (cat)
 cat <<EOT >> $backupdir/dbdump.sh
 #!/bin/bash
 EOT
 echo "Done."
-fi
+fi # end of if intersection
 
 echo ""
 echo "Finished installation and configuration."
