@@ -116,7 +116,7 @@ cat <<EOT >> $backupdir/backup.sh
 
 LOG="backup.log"
 
-export BORG_REPO="ssh://$hostname/$repopath"
+export BORG_REPO="ssh://$hostname$repopath"
 export BORG_PASSPHRASE='$repopsw'
 
 ##

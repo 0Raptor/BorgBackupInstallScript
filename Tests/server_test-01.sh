@@ -8,5 +8,5 @@ backupscript="/home/backupuser/purge-backup.sh"
 
 echo "Test01 - Purge backups"
 echo " Initiating purge..."
-sh $backupscript
+/bin/bash $backupscript
 echo " Done."

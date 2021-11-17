@@ -12,5 +12,5 @@ echo " Creating dummy file..."
 echo "I'm a dummy file in a dummy world" > /root/dummy.txt
 echo " Done."
 echo " Initiating backup..."
-sh $backupscript
+/bin/bash $backupscript
 echo " Done."

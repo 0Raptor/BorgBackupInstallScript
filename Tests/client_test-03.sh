@@ -15,7 +15,12 @@ echo " Switch to root-directory..."
 #change directory to the root directory so dummy file will be extracted to the correct path
 cd /
 echo " Done."
+echo " List all backups..."
+borg list $backuparchive
+echo " Done."
+echo "Please select a backup from the list:"
+read bu
 echo " Restoring dummy file..."
 #extract dummy file from borg archive
-borg extract $backuparchive /root/dummy.txt
+borg extract $backuparchive::$bu /root/dummy.txt
 echo " Done."
