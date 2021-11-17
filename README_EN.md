@@ -34,6 +34,18 @@ chmod +x scriptname.sh
 sudo ./scriptname.sh
 ```
 
+### Testing  
+#### Automatic
+You can find shell scripts inside the directory "Tests". They can be downloaded and executed like the installation script.  
+Keep in mind to change the parameters **inside the file**.  
+The script shall be performed in the given order and on the server OR client.  
+The following functions will be checked
+1. Confirm SSH-Connection
+2. Create a backup including a dummy file
+3. Delete dummy file and recover it from backup afterwards
+4. Perform a Backup-Prune
+
+#### Manually
 Before performing the backup for the first time, test the connection with `ssh backup` (or the configured server alias). After the manual confirmation of the server identity by typing `y` an empty console line should be displayed. This can be exited with Ctrl+C. If everything worked, the following message is displayed:
 ```
 ^C$LOG ERROR borg.archiver Remote: Keyboard interrupt

@@ -34,7 +34,19 @@ chmod +x scriptname.sh
 sudo ./scriptname.sh
 ```
 
-Vor dem ersten Durchführen des Backups kann die Verbindung mit `ssh backup` (bzw. dem konfigurierten Server-Alias) testen. Nach dem Manuellen bestätigen der Serveridentität durch Eingeben von `y` sollte eine leere Konsolenzeile angezeigt werden. Diese kann mit Strg+C verlassen werden. Wenn alles geklappt hat, wird folgende Meldung angezeigt: 
+### Testen  
+#### Automatisch
+Im Unterverzeichnis "Tests" befinden sich Shell-Skripte, die wie das Installationsskript heruntergeladen und ausgeführt werden können.  
+Hierbei ist zu beachten, dass die Parameter am Anfang der Skripte **in der Datei** angepasst werden müssen.  
+Die Skripte sollten der Reihe nach und entsprechend der Bezeichnung auf dem Server oder Client ausgeführt werden.  
+Es wird Folgendes getestet
+1. Herstellen der SSH Verbindung
+2. Erstellen eines Backups inkl. einer Test-Datei
+3. Löschen der Test-Datei und anschließendes Wiederherstellen dieser aus dem Backup
+4. Ausführen des Backup-Prune-Vorgangs
+
+#### Manuell
+Vor dem ersten Durchführen des Backups kann die Verbindung mit `ssh backup` (bzw. dem konfigurierten Server-Alias) testen. Nach dem Manuellen bestätigen der Serveridentität durch Eingeben von `yes` sollte eine leere Konsolenzeile angezeigt werden. Diese kann mit Strg+C verlassen werden. Wenn alles geklappt hat, wird folgende Meldung angezeigt: 
 ```
 ^C$LOG ERROR borg.archiver Remote: Keyboard interrupt
 Connection to %SERVER% closed.
